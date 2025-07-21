@@ -1,4 +1,4 @@
-name: Rclone Workflow Upload
+name: share_drive
 
 on:
   workflow_dispatch:  # Enables manual trigger from the Actions tab
