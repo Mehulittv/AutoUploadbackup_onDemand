@@ -38,11 +38,7 @@ jobs:
 
         echo "Backup renamed to ${dated_file}"
 
-        # Copy to Shared with Me Jellyfin folder
-        #rclone copy w1928440:Jellyfin_BKP/${dated_file} "w1928440:Shared with Me/Jellyfin/"
-        rclone copy w1928440:Jellyfin_BKP/jellyfin_backup.zip "w1928440:Shared with Me/Jellyfin/"
-
-        echo "Backup copied to Shared with Me Jellyfin folder."
+        
 
         else
         echo "File not found, skipping backup step."
@@ -64,6 +60,14 @@ jobs:
           tail -n 1 ~/.cache/rclone/rclone.log | grep -Eo "Transferred.*ETA.*$" || echo "Pending..."
           sleep 10
         done
+        
+    - name: share to shared with me vflix drive
+      run: |
+        # Copy to Shared with Me Jellyfin folder
+        #rclone copy w1928440:Jellyfin_BKP/${dated_file} "w1928440:Shared with Me/Jellyfin/"
+        rclone copy w1928440:Jellyfin_BKP/jellyfin_backup.zip "w1928440:Shared with Me/Jellyfin/"
+
+        echo "Backup copied to Shared with Me Jellyfin folder."
 
     - name: Send Telegram notification
       env:
