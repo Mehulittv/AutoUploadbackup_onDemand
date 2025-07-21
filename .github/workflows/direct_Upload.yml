@@ -26,15 +26,28 @@ jobs:
         team_drive = 
         EOF
 
-    - name: Conditional Backup
-      run: |
-        echo "Checking if the source file exists..."
-        if rclone lsf w1928440:Jellyfin_BKP/jellyfin_backup.zip; then
-          echo "File exists, proceeding with the backup."
-          rclone moveto w1928440:Jellyfin_BKP/jellyfin_backup.zip w1928440:Jellyfin_BKP/jellyfin_backup_$(date +%Y-%m-%d).zip
-        else
-          echo "File not found, skipping backup step."
-        fi
+- name: Conditional Backup
+  run: |
+    echo "Checking if the source file exists..."
+    if rclone lsf w1928440:Jellyfin_BKP/jellyfin_backup.zip; then
+      echo "File exists, proceeding with the backup."
+
+      # Rename/move the original backup to dated filename
+      dated_file="jellyfin_backup_$(date +%Y-%m-%d).zip"
+      rclone moveto w1928440:Jellyfin_BKP/jellyfin_backup.zip w1928440:Jellyfin_BKP/${dated_file}
+
+      echo "Backup renamed to ${dated_file}"
+
+      # Copy to Shared with Me Jellyfin folder
+      #rclone copy w1928440:Jellyfin_BKP/${dated_file} "w1928440:Shared with Me/Jellyfin/"
+      rclone copy w1928440:Jellyfin_BKP/jellyfin_backup.zip "w1928440:Shared with Me/Jellyfin/"
+
+      echo "Backup copied to Shared with Me Jellyfin folder."
+
+    else
+      echo "File not found, skipping backup step."
+    fi
+
 
     - name: Upload with progress details
       run: |
